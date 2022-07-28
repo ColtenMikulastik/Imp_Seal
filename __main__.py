@@ -24,6 +24,8 @@ def make_new_user():
         if(pass_hash.digest() == re_pass_hash.digest()):
             print("storing username and password...")
             # this is where I would store the passwords
+            user_pass_dic = {username: pass_hash}
+            # now we should write this to a file
             loop_make_user = False
             return
         else:
