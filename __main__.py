@@ -25,12 +25,9 @@ def make_new_user(password_file):
         if(pass_hash.digest() == re_pass_hash.digest()):
             print("storing username and password...")
 
-            # this is where I would store the passwords
-            user_pass_dic = {username: pass_hash}
-
             # now we should write this to a file
             with open(password_file, "wb") as file:
-                file.write(user_pass_dic)
+                file.write(username + ':' + pass_hash.digest())
 
             loop_make_user = False
             return
@@ -64,7 +61,7 @@ def main():
         print("------------<>-----------")
         log_prompt = input(": ")
         if log_prompt == 'c':
-            make_new_user()
+            make_new_user(password_file)
             os.system("clear")
         elif log_prompt == 'l':
             print("you pressed l")
