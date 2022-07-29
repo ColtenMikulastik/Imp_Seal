@@ -1,7 +1,8 @@
 import hashlib
 import os
 
-def make_new_user():
+def make_new_user(password_file):
+    '''Creates a new user in the password file'''
     os.system("clear")
     loop_make_user = True
     while loop_make_user:
@@ -23,19 +24,35 @@ def make_new_user():
     
         if(pass_hash.digest() == re_pass_hash.digest()):
             print("storing username and password...")
+
             # this is where I would store the passwords
             user_pass_dic = {username: pass_hash}
+
             # now we should write this to a file
+            with open(password_file, "wb") as file:
+                file.write(user_pass_dic)
+
             loop_make_user = False
             return
         else:
             print("Sorry, either these passwords do not match, or the resultant hashes are wrong.")
             print("please try again")
             # loop again
-    
+
+
+def make_password_file(pass_file_name):
+    # touching file to store passwords
+    # if it exists, there should be no problem
+    # also making the file hidden :^)
+    os.system("touch " + pass_file_name)
+
 
 def main():
+    # this is the password files
+    password_file = ".usr_psw"
+    make_password_file(password_file)
     os.system("clear")
+
     print("Imp_Seal ver 1")
     loop_over = True
     # create a ui
