@@ -21,6 +21,7 @@ def make_new_user(password_file, user_password):
         re_password = input("re-password:")
         byte_re_password = bytes(re_password,"utf-8")
         re_pass_hash = hashlib.new("sha256", byte_re_password)
+
         print("------------<>-----------")
     
         if(pass_hash.digest() == re_pass_hash.digest()):
@@ -61,16 +62,24 @@ def main():
     # create a ui
     while loop_over:
         print("------------<>-----------")
+        print("please choose an option below:")
+        print("------------<>-----------")
         print("c - create new user")
+        print("r - remove user")
         print("l - login")
+        print("b - clear screen")
         print("q - quit")
         print("------------<>-----------")
         log_prompt = input(": ")
         if log_prompt == 'c':
             make_new_user(password_file, user_password)
-            os.system("clear")
         elif log_prompt == 'l':
             print("you pressed l")
+        elif log_prompt == 'r':
+            print("you have pressed r")
+        elif log_prompt == 'b':
+            print("you have pressed b")
+            os.system("clear")
         elif log_prompt == 'q':
             print("you wish to quit")
             loop_over = False
