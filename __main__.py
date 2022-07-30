@@ -39,6 +39,39 @@ def make_new_user(password_file, user_password):
             # loop again
 
 
+def remove_user(pass_file_name, user_password):
+    # get username
+    which_user = input("what user would you like to delete?:")
+    # load in dictionary
+    user_dict = {}
+    with open(pass_file_name, "rb") as file:
+        user_dict = pickle.load(file)
+    #get password
+    in_pass = input("what is this user's password?:")
+    in_encoded_pass = bytes(in_pass, "utf-8")
+    hash_pass = hashlib.new("sha256", in_encoded_pass)
+    #look for user
+    found_user = False
+    for dict_user, dict_pass in user_dict.items():
+        if dict_user == which_user and hash_pass.digest() == dict_pass:
+            found_user = True
+        else:
+            pass
+    if found_user:
+        # remove user from the dictionary
+        del user_dict[which_user]
+        print("This username was found and is now deleted")
+        # now I am going to reload the dictionary into the file
+        with open(pass_file_name, "wb") as file:
+            pickle.dump(user_dict, file)
+        return
+    else:
+        print("This username was not found and can't be deleted")
+        return
+            
+
+
+
 def make_password_file(pass_file_name):
     # touching file to store passwords
     # if it exists, there should be no problem
@@ -77,6 +110,7 @@ def main():
             print("you pressed l")
         elif log_prompt == 'r':
             print("you have pressed r")
+            remove_user(password_file, user_password)
         elif log_prompt == 'b':
             print("you have pressed b")
             os.system("clear")
