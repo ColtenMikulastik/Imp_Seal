@@ -7,6 +7,10 @@ import pickle
 #   -if you make a second account with same username, no errors, needs to be fixed
 #   -no login yet
 
+# constants
+ENCODING = "utf-8"
+HASH_ALGO = "sha256"
+
 
 def make_new_user(password_file, user_password):
     '''Creates a new user in the password file'''
@@ -20,13 +24,13 @@ def make_new_user(password_file, user_password):
         # I need to hash these
         password = input("password:")
         # using utf-8 byte encoding
-        byte_password = bytes(password,"utf-8")
+        byte_password = bytes(password, ENCODING)
         # hashify
-        pass_hash = hashlib.new("sha256", byte_password)
+        pass_hash = hashlib.new(HASH_ALGO, byte_password)
         # retry the password to make sure that it's the same
         re_password = input("re-password:")
-        byte_re_password = bytes(re_password,"utf-8")
-        re_pass_hash = hashlib.new("sha256", byte_re_password)
+        byte_re_password = bytes(re_password, ENCODING)
+        re_pass_hash = hashlib.new(HASH_ALGO, byte_re_password)
 
         print("------------<>-----------")
     
@@ -54,8 +58,8 @@ def remove_user(pass_file_name, user_password):
         user_dict = pickle.load(file)
     #get password
     in_pass = input("what is this user's password?:")
-    in_encoded_pass = bytes(in_pass, "utf-8")
-    hash_pass = hashlib.new("sha256", in_encoded_pass)
+    in_encoded_pass = bytes(in_pass, ENCODING)
+    hash_pass = hashlib.new(HASH_ALGO, in_encoded_pass)
     #look for user
     found_user = False
     for dict_user, dict_pass in user_dict.items():
