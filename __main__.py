@@ -78,9 +78,32 @@ def remove_user(pass_file_name, user_password):
     else:
         print("This username was not found and can't be deleted")
         return
-            
+  
 
-
+def login(pass_file_name, user_pass_dict):
+    """check to see if user is in data base"""
+    # at some point, I want to add unencoding files so
+    # that the program has a purpose
+    # get username and password
+    in_user = input("username:")
+    in_pass = input("password:")
+    print("logging in...")
+    encod_in_pass = bytes(in_pass, ENCODING)
+    hash_in_pass = hashlib.new(HASH_ALGO, encod_in_pass)
+    # look for information in dictionary
+    found_user = False
+    for dict_user, dict_pass in user_pass_dict.items():
+        if dict_user == in_user and hash_in_pass.digest() == dict_pass:
+            found_user = True
+        else:
+            pass
+    if found_user:
+        print("logged in!")
+        return
+    else:
+        print("authentication failed...")
+        return
+ 
 
 def make_password_file(pass_file_name):
     # touching file to store passwords
@@ -117,7 +140,7 @@ def main():
         if log_prompt == 'c':
             make_new_user(password_file, user_password)
         elif log_prompt == 'l':
-            print("you pressed l")
+            login(password_file, user_password)
         elif log_prompt == 'r':
             remove_user(password_file, user_password)
         elif log_prompt == 'b':
