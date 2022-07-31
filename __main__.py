@@ -2,6 +2,12 @@ import hashlib
 import os
 import pickle
 
+# problems:
+#   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
+#   -if you make a second account with same username, no errors, needs to be fixed
+#   -no login yet
+
+
 def make_new_user(password_file, user_password):
     '''Creates a new user in the password file'''
     os.system("clear")
@@ -109,10 +115,8 @@ def main():
         elif log_prompt == 'l':
             print("you pressed l")
         elif log_prompt == 'r':
-            print("you have pressed r")
             remove_user(password_file, user_password)
         elif log_prompt == 'b':
-            print("you have pressed b")
             os.system("clear")
         elif log_prompt == 'q':
             print("you wish to quit")
