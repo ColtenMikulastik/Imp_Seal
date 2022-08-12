@@ -62,8 +62,11 @@ def make_new_user(password_file, user_password):
     
         if(pass_hash.digest() == re_pass_hash.digest()):
             print("storing username and password...")
+            # creating a special salt for new user
+            salt = generate_salt()
+            user_hash_n_salt = [pass_hash.digest(), salt]
             # we need to add logic for same username
-            user_password[username] = pass_hash.digest()
+            user_password[username] = user_hash_n_salt
             # now we should write this to a file
             with open(password_file, "wb") as file:
                 pickle.dump(user_password, file)
@@ -88,8 +91,8 @@ def remove_user(pass_file_name, user_password):
     hash_pass = hashlib.new(HASH_ALGO, in_encoded_pass)
     #look for user
     found_user = False
-    for dict_user, dict_pass in user_dict.items():
-        if dict_user == which_user and hash_pass.digest() == dict_pass:
+    for dict_user, hash_n_salt in user_dict.items():
+        if dict_user == which_user and hash_pass.digest() == hash_n_salt[0]:
             found_user = True
         else:
             pass
@@ -118,8 +121,8 @@ def login(pass_file_name, user_pass_dict):
     hash_in_pass = hashlib.new(HASH_ALGO, encod_in_pass)
     # look for information in dictionary
     found_user = False
-    for dict_user, dict_pass in user_pass_dict.items():
-        if dict_user == in_user and hash_in_pass.digest() == dict_pass:
+    for dict_user, hash_n_salt in user_pass_dict.items():
+        if dict_user == in_user and hash_in_pass.digest() == hash_n_salt[0]:
             found_user = True
         else:
             pass
