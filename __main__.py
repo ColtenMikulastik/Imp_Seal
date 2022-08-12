@@ -2,6 +2,17 @@ import hashlib
 import os
 import pickle
 
+# encryption libs
+
+import cryptography
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+
+import secrets
+import base64
+import getpass
+
+
 # problems:
 #   -add file encrypotion
 #       -make room for salts in the user password folder
@@ -14,6 +25,17 @@ import pickle
 # constants
 ENCODING = "utf-8"
 HASH_ALGO = "sha256"
+
+
+def generate_salt():
+    return secrets.token_bytes(16)
+
+
+def derive_key(salt, password):
+    # options here should be looked up if confusing
+    kdf = Scrypt(salt=salt, length=32, n=2**14, r=8, p=1)
+    return kdf.derive(password.encode())
+
 
 
 def make_new_user(password_file, user_password):
