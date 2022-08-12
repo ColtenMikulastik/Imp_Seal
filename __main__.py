@@ -15,8 +15,6 @@ import getpass
 
 # problems:
 #   -add file encrypotion
-#       -make room for salts in the user password folder
-#       -implement salt creation and storage
 #       -create the encryption key from the un-hashed password
 #       -give option to encrypt or unencrypt eveything in specific file after user is authenticated
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
@@ -26,15 +24,59 @@ import getpass
 ENCODING = "utf-8"
 HASH_ALGO = "sha256"
 
+def post_auth_loop(password, salt):
+    # create the key from the clear text password
+    key = derive_key(password, salt)
+    loop_through = True
+    print("Welcome!")
+    while loop_through:
+        print("--------------")
+        # get encrypt or decry
+        in_bool = None
+        in_bool = input("would you like to (e)ncrypt, (d)ecrypt or (q)uit?:")
+        # get the file name
+        file_name = ""
+        file_name = input("What file would you like (encrypt/decrypt)?:")
+        
+        if in_bool == 'e':
+            # encrypt the file
+            fern_key = Fernet(key)
+            # take the data
+            with open(file_name, "rb") as f:
+                file_data = f.read()
+            # encrypt the data
+            encrypted_data = fern_key.encrypt(file_data)
+            # write encrypted data back into file
+            with open(file_name, "wb") as f:
+                f.write(encrypted_data)
+
+        elif in_bool == 'd':
+            # decrypt the file
+            fern_key = Fernet(key)
+            # take the encrypted data out
+            with open(file_name, "rb") as f:
+                encrypted_data = f.read()
+            # decrypt the data
+            decrypted_data = fern_key.decrypt(encrypted_data)
+            with open(file_name, "wb") as f:
+                 f.write(decrypted_data)
+
+        elif in_bool == 'q':
+            loop_through = False
+        else:
+            print("could not understand input")
+
+
 
 def generate_salt():
     return secrets.token_bytes(16)
 
 
-def derive_key(salt, password):
+def derive_key(password, salt):
     # options here should be looked up if confusing
     kdf = Scrypt(salt=salt, length=32, n=2**14, r=8, p=1)
-    return kdf.derive(password.encode())
+    derived_key = kdf.derive(password.encode())
+    return base64.urlsafe_b64encode(derived_key)
 
 
 
@@ -119,15 +161,20 @@ def login(pass_file_name, user_pass_dict):
     print("logging in...")
     encod_in_pass = bytes(in_pass, ENCODING)
     hash_in_pass = hashlib.new(HASH_ALGO, encod_in_pass)
+    # save the salt
+    salt = b''
     # look for information in dictionary
     found_user = False
     for dict_user, hash_n_salt in user_pass_dict.items():
         if dict_user == in_user and hash_in_pass.digest() == hash_n_salt[0]:
             found_user = True
+            salt = hash_n_salt[1]
         else:
             pass
     if found_user:
         print("logged in!")
+        # might want to send my encoded password.... ?
+        post_auth_loop(in_pass, salt)
         return
     else:
         print("authentication failed...")
