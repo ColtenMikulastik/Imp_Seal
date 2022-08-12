@@ -48,13 +48,13 @@ def make_new_user(password_file, user_password):
         # I'm gonna store usernames as clear text
         username = input("username:")
         # I need to hash these
-        password = input("password:")
+        password = getpass.getpass("password:")
         # using utf-8 byte encoding
         byte_password = bytes(password, ENCODING)
         # hashify
         pass_hash = hashlib.new(HASH_ALGO, byte_password)
         # retry the password to make sure that it's the same
-        re_password = input("re-password:")
+        re_password = getpass.getpass("re-password:")
         byte_re_password = bytes(re_password, ENCODING)
         re_pass_hash = hashlib.new(HASH_ALGO, byte_re_password)
 
@@ -86,7 +86,7 @@ def remove_user(pass_file_name, user_password):
     with open(pass_file_name, "rb") as file:
         user_dict = pickle.load(file)
     #get password
-    in_pass = input("what is this user's password?:")
+    in_pass = getpass.getpass("what is this user's password?:")
     in_encoded_pass = bytes(in_pass, ENCODING)
     hash_pass = hashlib.new(HASH_ALGO, in_encoded_pass)
     #look for user
@@ -115,7 +115,7 @@ def login(pass_file_name, user_pass_dict):
     # that the program has a purpose
     # get username and password
     in_user = input("username:")
-    in_pass = input("password:")
+    in_pass = getpass.getpass("password:")
     print("logging in...")
     encod_in_pass = bytes(in_pass, ENCODING)
     hash_in_pass = hashlib.new(HASH_ALGO, encod_in_pass)
