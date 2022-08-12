@@ -3,9 +3,13 @@ import os
 import pickle
 
 # problems:
+#   -add file encrypotion
+#       -make room for salts in the user password folder
+#       -implement salt creation and storage
+#       -create the encryption key from the un-hashed password
+#       -give option to encrypt or unencrypt eveything in specific file after user is authenticated
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
 #   -if you make a second account with same username, no errors, needs to be fixed
-#   -no login yet
 
 # constants
 ENCODING = "utf-8"
