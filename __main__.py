@@ -24,6 +24,30 @@ import getpass
 ENCODING = "utf-8"
 HASH_ALGO = "sha256"
 
+
+def encrypt_files(fern_key):
+    # move to the encrypt_me directory
+    cur_dir = os.getcwd()
+    os.chdir(os.path.join(cur_dir, "encrypt_me"))
+    
+    # find all the files inside
+    files_to_encrypt = os.listdir()
+    
+    #loop through the files
+    for file_name in files_to_encrypt: 
+        # take the data
+        with open(file_name, "rb") as f:
+            file_data = f.read()
+        # encrypt the data
+        encrypted_data = fern_key.encrypt(file_data)
+        # write encrypted data back into a .cy file
+        with open(file_name + ".cy", "wb") as f:
+            f.write(encrypted_data)
+        print(file_name + " encryption complete")
+    # notify the use job done
+    print("all files in encrypt_me are now encrypted")
+    os.chdir("..")
+
 def post_auth_loop(password, salt):
     # create the key from the clear text password
     key = derive_key(password, salt)
@@ -41,14 +65,7 @@ def post_auth_loop(password, salt):
         if in_bool == 'e':
             # encrypt the file
             fern_key = Fernet(key)
-            # take the data
-            with open(file_name, "rb") as f:
-                file_data = f.read()
-            # encrypt the data
-            encrypted_data = fern_key.encrypt(file_data)
-            # write encrypted data back into file
-            with open(file_name, "wb") as f:
-                f.write(encrypted_data)
+            encrypt_files(fern_key)
 
         elif in_bool == 'd':
             # decrypt the file

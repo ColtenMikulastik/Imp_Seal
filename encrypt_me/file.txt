@@ -1,0 +1,5 @@
+Hello,
+This is a secret message, and will be encrypted.
+Once this message has become cypher text, you will not be able to read it.
+by encrypting this medium length file we will see if there is any issues with our method of encryption.
+
