@@ -25,6 +25,35 @@ ENCODING = "utf-8"
 HASH_ALGO = "sha256"
 
 
+def decrypt_files(fern_key):
+    # move to the decrypt file
+    cur_dir = os.getcwd()
+    os.chdir(os.path.join(cur_dir, "decrypt_me"))
+    
+    # find all the files inside
+    files_to_decrypt = os.listdir()
+
+    # loop through those files
+    for file_name in files_to_decrypt:
+        # take the encrypted data out
+        with open(file_name, "rb") as f:
+            encrypted_data = f.read()
+        # decrypt the data
+        decrypted_data = fern_key.decrypt(encrypted_data)
+        # need to fix the file extension
+        fix_ext = file_name.split('.')
+        fix_ext.pop()
+        fix_ext = '.'.join(fix_ext)
+        # write to the files
+        with open(fix_ext, "wb") as f:
+            f.write(decrypted_data)
+        # notify the user
+        print(fix_ext + " file done decrypting")
+    # notify the user
+    print("finished decrypting")
+    
+
+
 def encrypt_files(fern_key):
     # move to the encrypt_me directory
     cur_dir = os.getcwd()
@@ -58,25 +87,18 @@ def post_auth_loop(password, salt):
         # get encrypt or decry
         in_bool = None
         in_bool = input("would you like to (e)ncrypt, (d)ecrypt or (q)uit?:")
-        # get the file name
-        file_name = ""
-        file_name = input("What file would you like (encrypt/decrypt)?:")
         
         if in_bool == 'e':
             # encrypt the file
             fern_key = Fernet(key)
+            # send to function
             encrypt_files(fern_key)
 
         elif in_bool == 'd':
             # decrypt the file
             fern_key = Fernet(key)
-            # take the encrypted data out
-            with open(file_name, "rb") as f:
-                encrypted_data = f.read()
-            # decrypt the data
-            decrypted_data = fern_key.decrypt(encrypted_data)
-            with open(file_name, "wb") as f:
-                 f.write(decrypted_data)
+            # send to function
+            decrypt_files(fern_key)
 
         elif in_bool == 'q':
             loop_through = False
