@@ -194,7 +194,7 @@ def remove_user(pass_file_name, user_password):
         return
   
 
-def login(user_pass_dict):
+def login(user_pass_data_base):
     """check to see if user is in data base"""
     # at some point, I want to add unencoding files so
     # that the program has a purpose
@@ -208,7 +208,7 @@ def login(user_pass_dict):
     salt = b''
     # look for information in dictionary
     found_user = False
-    for dict_user, hash_n_salt in user_pass_dict.items():
+    for dict_user, hash_n_salt in user_pass_data_base.items():
         if dict_user == in_user and hash_in_pass.digest() == hash_n_salt[0]:
             found_user = True
             salt = hash_n_salt[1]
