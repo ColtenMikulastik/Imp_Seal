@@ -14,11 +14,11 @@ import getpass
 
 
 # problems:
-#   -add file encrypotion
-#       -create the encryption key from the un-hashed password
-#       -give option to encrypt or unencrypt eveything in specific file after user is authenticated
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
+#   -password change functionality
 #   -if you make a second account with same username, no errors, needs to be fixed
+#       -idea for solving: add specific folder for users,
+#           -then allow root to access all folders
 
 # constants
 ENCODING = "utf-8"
