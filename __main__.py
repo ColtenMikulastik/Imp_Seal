@@ -194,7 +194,7 @@ def remove_user(pass_file_name, user_password):
         return
   
 
-def login(pass_file_name, user_pass_dict):
+def login(user_pass_dict):
     """check to see if user is in data base"""
     # at some point, I want to add unencoding files so
     # that the program has a purpose
@@ -224,11 +224,11 @@ def login(pass_file_name, user_pass_dict):
         return
  
 
-def make_password_file(pass_file_name):
+def make_password_file(password_file_name):
     # touching file to store passwords
     # if it exists, there should be no problem
     # also making the file hidden :^) 
-    os.system("touch " + pass_file_name)
+    os.system("touch " + password_file_name)
 
 
 def main():
@@ -259,7 +259,7 @@ def main():
         if log_prompt == 'c':
             make_new_user(password_file_name, user_and_password_data_base)
         elif log_prompt == 'l':
-            login(password_file_name, user_and_password_data_base)
+            login(user_and_password_data_base)
         elif log_prompt == 'r':
             remove_user(password_file_name, user_and_password_data_base)
         elif log_prompt == 'b':
