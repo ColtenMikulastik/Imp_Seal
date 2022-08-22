@@ -233,19 +233,19 @@ def make_password_file(pass_file_name):
 
 def main():
     # this is the password files
-    password_file = ".usr_psw"
-    make_password_file(password_file)
+    password_file_name = ".usr_psw"
+    make_password_file(password_file_name)
     os.system("clear")
 
     # this is where I will create the dictionary
-    user_password = {}
-    with open(password_file, "rb") as file:
-        user_password = pickle.load(file)
+    user_and_password_data_base = {}
+    with open(password_file_name, "rb") as file:
+        user_and_password_data_base = pickle.load(file)
 
     print("Imp_Seal ver 1")
-    loop_over = True
+    loop_prompt = True
     # create a ui
-    while loop_over:
+    while loop_prompt:
         print("------------<>-----------")
         print("please choose an option below:")
         print("------------<>-----------")
@@ -257,16 +257,16 @@ def main():
         print("------------<>-----------")
         log_prompt = input(": ")
         if log_prompt == 'c':
-            make_new_user(password_file, user_password)
+            make_new_user(password_file_name, user_and_password_data_base)
         elif log_prompt == 'l':
-            login(password_file, user_password)
+            login(password_file_name, user_and_password_data_base)
         elif log_prompt == 'r':
-            remove_user(password_file, user_password)
+            remove_user(password_file_name, user_and_password_data_base)
         elif log_prompt == 'b':
             os.system("clear")
         elif log_prompt == 'q':
             print("you wish to quit")
-            loop_over = False
+            loop_propmt = False
         else:
             print("lets try that again... (hint: lower-case)")
 
