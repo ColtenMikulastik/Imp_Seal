@@ -14,11 +14,14 @@ import getpass
 
 
 # problems:
+#   -fix some of the horrible variable names
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
 #   -password change functionality
 #   -if you make a second account with same username, no errors, needs to be fixed
 #       -idea for solving: add specific folder for users,
 #           -then allow root to access all folders
+#   -what if something is changed after encryption? this is important to fix
+
 
 # constants
 ENCODING = "utf-8"
@@ -99,9 +102,10 @@ def post_auth_loop(password, salt):
             fern_key = Fernet(key)
             # send to function
             decrypt_files(fern_key)
-
+        
         elif in_bool == 'q':
             loop_through = False
+
         else:
             print("could not understand input")
 
@@ -223,7 +227,7 @@ def login(pass_file_name, user_pass_dict):
 def make_password_file(pass_file_name):
     # touching file to store passwords
     # if it exists, there should be no problem
-    # also making the file hidden :^)
+    # also making the file hidden :^) 
     os.system("touch " + pass_file_name)
 
 
