@@ -14,7 +14,6 @@ import getpass
 
 
 # problems:
-#   -fix some of the horrible variable names
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
 #   -password change functionality
 #   -if you make a second account with same username, no errors, needs to be fixed
