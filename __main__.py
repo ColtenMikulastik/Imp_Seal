@@ -266,7 +266,7 @@ def main():
             os.system("clear")
         elif log_prompt == 'q':
             print("you wish to quit")
-            loop_propmt = False
+            loop_prompt = False
         else:
             print("lets try that again... (hint: lower-case)")
 
