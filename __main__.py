@@ -27,6 +27,12 @@ ENCODING = "utf-8"
 HASH_ALGO = "sha256"
 
 
+def csv_out(user_and_password_data_base):
+    """outputs user, password, and salt into a csv file"""
+    outfile = input("what filename would you like the csv file to be?:")
+    print(user_and_password_data_base)
+
+
 def decrypt_files(fern_key):
     # move to the decrypt file
     cur_dir = os.getcwd()
@@ -253,6 +259,7 @@ def main():
         print("l - login")
         print("b - clear screen")
         print("q - quit")
+        print("o - csv output")
         print("------------<>-----------")
         log_prompt = input(": ")
         if log_prompt == 'c':
@@ -263,6 +270,8 @@ def main():
             remove_user(password_file_name, user_and_password_data_base)
         elif log_prompt == 'b':
             os.system("clear")
+        elif log_prompt == 'o':
+            csv_out(user_and_password_data_base)
         elif log_prompt == 'q':
             print("you wish to quit")
             loop_prompt = False
