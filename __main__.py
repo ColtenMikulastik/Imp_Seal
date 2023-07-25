@@ -12,7 +12,6 @@ import secrets
 import base64
 import getpass
 
-
 # problems:
 #   -if you run Imp from outside the folder, you will create a .usr_psw file outside of the dir
 #   -password change functionality
@@ -29,8 +28,20 @@ HASH_ALGO = "sha256"
 
 def csv_out(user_and_password_data_base):
     """outputs user, password, and salt into a csv file"""
+    
+    # where does user want to put information
     outfile = input("what filename would you like the csv file to be?:")
-    print(user_and_password_data_base)
+
+    for user, hash_n_salt in user_and_password_data_base.items():
+        print("user: " + user)
+        print("password hash:")
+        print(hash_n_salt[0])
+
+        # for some reason this doesn't work 
+        pass_hash = bytes.decode(hash_n_salt[0], ENCODING)
+        print(pass_hash)
+        print("salt hash: ")
+        print(hash_n_salt[1])
 
 
 def decrypt_files(fern_key):
