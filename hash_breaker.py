@@ -66,6 +66,9 @@ def brute_force_hash_break(target_info):
                     pass_try = letter_one + letter_two + letter_three + letter_four
                     print(pass_try)
 
+    # if you have an array. pass_length long, with omni_list.length() ints at each index and you subtracked starting at the end....
+    # it would be like a base-"omni_list" number system
+    # that would work
 
 
 
