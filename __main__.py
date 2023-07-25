@@ -42,7 +42,7 @@ def csv_out(user_and_password_data_base):
     with open(csv_file_name, mode='w', encoding="utf-8") as csv_file:
         for user, hash_n_salt in user_and_password_data_base.items():
             csv_file.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
-            csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")    
+            csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
 
 
 def decrypt_files(fern_key):
@@ -57,8 +57,8 @@ def decrypt_files(fern_key):
     # loop through those files
     for file_name in files_to_decrypt:
         # take the encrypted data out
-        with open(file_name, "rb") as f:
-            encrypted_data = f.read()
+        with open(file_name, "rb") as encrypted_file:
+            encrypted_data = encrypted_file.read()
         # decrypt the data
         decrypted_data = fern_key.decrypt(encrypted_data)
         # need to fix the file extension
@@ -66,13 +66,12 @@ def decrypt_files(fern_key):
         fix_ext.pop()
         fix_ext = '.'.join(fix_ext)
         # write to the files
-        with open(fix_ext, "wb") as f:
-            f.write(decrypted_data)
+        with open(fix_ext, "wb") as decrypted_file:
+            decrypted_file.write(decrypted_data)
         # notify the user
         print(fix_ext + " file done decrypting")
     # notify the user
     print("finished decrypting")
-
 
 
 def encrypt_files(fern_key):
@@ -87,17 +86,18 @@ def encrypt_files(fern_key):
     #loop through the files
     for file_name in files_to_encrypt:
         # take the data
-        with open(file_name, "rb") as f:
-            file_data = f.read()
+        with open(file_name, "rb") as decrypted_file:
+            file_data = decrypted_file.read()
         # encrypt the data
         encrypted_data = fern_key.encrypt(file_data)
         # write encrypted data back into a .cy file
-        with open(file_name + ".cy", "wb") as f:
-            f.write(encrypted_data)
+        with open(file_name + ".cy", "wb") as encrypted_file:
+            encrypted_file.write(encrypted_data)
         print(file_name + " encryption complete")
     # notify the use job done
     print("all files in encrypt_me are now encrypted")
     os.chdir("..")
+
 
 def post_auth_loop(password, salt):
     """ after authenticating the user can then use their password
@@ -112,22 +112,19 @@ def post_auth_loop(password, salt):
         # get encrypt or decry
         in_bool = None
         in_bool = input("would you like to (e)ncrypt, (d)ecrypt or (q)uit?:")
-    
+
         if in_bool == 'e':
             # encrypt the file
             fern_key = Fernet(key)
             # send to function
             encrypt_files(fern_key)
-
         elif in_bool == 'd':
             # decrypt the file
             fern_key = Fernet(key)
             # send to function
             decrypt_files(fern_key)
-
         elif in_bool == 'q':
             loop_through = False
-
         else:
             print("could not understand input")
 
@@ -177,7 +174,6 @@ def make_new_user(password_file, user_password):
             with open(password_file, "wb") as file:
                 pickle.dump(user_password, file)
             loop_make_user = False
-            return
         else:
             print("Sorry, either these passwords do not match, or the resultant hashes are wrong.")
             print("please try again")
@@ -210,10 +206,8 @@ def remove_user(pass_file_name, user_password):
         # now I am going to reload the dictionary into the file
         with open(pass_file_name, "wb") as file:
             pickle.dump(user_dict, file)
-        return
     else:
         print("This username was not found and can't be deleted")
-        return
 
 
 def login(user_pass_data_base):
@@ -240,10 +234,8 @@ def login(user_pass_data_base):
         print("logged in!")
         # might want to send my encoded password.... ?
         post_auth_loop(in_pass, salt)
-        return
     else:
         print("authentication failed...")
-        return
 
 
 def make_password_file(password_file_name):
