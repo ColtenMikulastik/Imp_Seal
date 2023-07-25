@@ -46,6 +46,7 @@ def csv_out(user_and_password_data_base):
 
 
 def decrypt_files(fern_key):
+    """ uses fern_key argument to decrypt files in decrypt_me folder """
     # move to the decrypt file
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "decrypt_me"))
@@ -75,6 +76,7 @@ def decrypt_files(fern_key):
 
 
 def encrypt_files(fern_key):
+    """ uses fern_key argument to encrypt files in encrypt_me folder """
     # move to the encrypt_me directory
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "encrypt_me"))
@@ -98,6 +100,9 @@ def encrypt_files(fern_key):
     os.chdir("..")
 
 def post_auth_loop(password, salt):
+    """ after authenticating the user can then use their password
+    and salt to create a fernkey to encrypt and decrypt files"""
+
     # create the key from the clear text password
     key = derive_key(password, salt)
     loop_through = True
@@ -140,7 +145,7 @@ def derive_key(password, salt):
 
 
 def make_new_user(password_file, user_password):
-    '''Creates a new user in the password file'''
+    """ Creates a new user in the password file """
     os.system("clear")
     loop_make_user = True
     while loop_make_user:
@@ -180,6 +185,7 @@ def make_new_user(password_file, user_password):
 
 
 def remove_user(pass_file_name, user_password):
+    """ Removes user from data base """
     # get username
     which_user = input("what user would you like to delete?:")
     # load in dictionary
@@ -248,6 +254,7 @@ def make_password_file(password_file_name):
 
 
 def main():
+    """ unloads password database, and loops initial interface """
     # this is the password files
     password_file_name = ".usr_psw"
     make_password_file(password_file_name)
