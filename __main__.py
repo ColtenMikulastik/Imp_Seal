@@ -1,17 +1,16 @@
-import hashlib
-import os
-import pickle
 
-# encryption libs
+""" This program creates a user environemnt to encrypt and decrypt files """
 
-import cryptography
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
-import secrets
 import base64
-import getpass
 import binascii
+import getpass
+import hashlib
+import os
+import pickle
+import secrets
 
 
 # problems:
@@ -30,32 +29,32 @@ HASH_ALGO = "sha256"
 
 def csv_out(user_and_password_data_base):
     """outputs user, password, and salt into a csv file"""
-    
+
     # where does user want to put information, and create the file
-    outfile = input("what filename would you like the csv file to be?:")
-    os.system("touch " + outfile)
+    csv_file_name = input("what filename would you like the csv file to be?:")
+    os.system("touch " + csv_file_name)
 
     # write the data to file, using hex encoding, and then turning the hex into ascii
-    f = open(outfile, "w") 
-    for user, hash_n_salt in user_and_password_data_base.items():
-        f.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
-        f.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
-    f.close()
+    with open(csv_file_name, mode='w', encoding="utf-8") as csv_file:
+        for user, hash_n_salt in user_and_password_data_base.items():
+            csv_file.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
+            csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
 
 
 def decrypt_files(fern_key):
+    """ uses fern_key argument to decrypt files in decrypt_me folder """
     # move to the decrypt file
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "decrypt_me"))
-    
+
     # find all the files inside
     files_to_decrypt = os.listdir()
 
     # loop through those files
     for file_name in files_to_decrypt:
         # take the encrypted data out
-        with open(file_name, "rb") as f:
-            encrypted_data = f.read()
+        with open(file_name, "rb") as encrypted_file:
+            encrypted_data = encrypted_file.read()
         # decrypt the data
         decrypted_data = fern_key.decrypt(encrypted_data)
         # need to fix the file extension
@@ -63,39 +62,43 @@ def decrypt_files(fern_key):
         fix_ext.pop()
         fix_ext = '.'.join(fix_ext)
         # write to the files
-        with open(fix_ext, "wb") as f:
-            f.write(decrypted_data)
+        with open(fix_ext, "wb") as decrypted_file:
+            decrypted_file.write(decrypted_data)
         # notify the user
         print(fix_ext + " file done decrypting")
     # notify the user
     print("finished decrypting")
-    
 
 
 def encrypt_files(fern_key):
+    """ uses fern_key argument to encrypt files in encrypt_me folder """
     # move to the encrypt_me directory
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "encrypt_me"))
-    
+
     # find all the files inside
     files_to_encrypt = os.listdir()
-    
+
     #loop through the files
-    for file_name in files_to_encrypt: 
+    for file_name in files_to_encrypt:
         # take the data
-        with open(file_name, "rb") as f:
-            file_data = f.read()
+        with open(file_name, "rb") as decrypted_file:
+            file_data = decrypted_file.read()
         # encrypt the data
         encrypted_data = fern_key.encrypt(file_data)
         # write encrypted data back into a .cy file
-        with open(file_name + ".cy", "wb") as f:
-            f.write(encrypted_data)
+        with open(file_name + ".cy", "wb") as encrypted_file:
+            encrypted_file.write(encrypted_data)
         print(file_name + " encryption complete")
     # notify the use job done
     print("all files in encrypt_me are now encrypted")
     os.chdir("..")
 
+
 def post_auth_loop(password, salt):
+    """ after authenticating the user can then use their password
+    and salt to create a fernkey to encrypt and decrypt files"""
+
     # create the key from the clear text password
     key = derive_key(password, salt)
     loop_through = True
@@ -105,25 +108,21 @@ def post_auth_loop(password, salt):
         # get encrypt or decry
         in_bool = None
         in_bool = input("would you like to (e)ncrypt, (d)ecrypt or (q)uit?:")
-        
+
         if in_bool == 'e':
             # encrypt the file
             fern_key = Fernet(key)
             # send to function
             encrypt_files(fern_key)
-
         elif in_bool == 'd':
             # decrypt the file
             fern_key = Fernet(key)
             # send to function
             decrypt_files(fern_key)
-        
         elif in_bool == 'q':
             loop_through = False
-
         else:
             print("could not understand input")
-
 
 
 def generate_salt():
@@ -139,7 +138,7 @@ def derive_key(password, salt):
 
 
 def make_new_user(password_file, user_password):
-    '''Creates a new user in the password file'''
+    """ Creates a new user in the password file """
     os.system("clear")
     loop_make_user = True
     while loop_make_user:
@@ -159,8 +158,8 @@ def make_new_user(password_file, user_password):
         re_pass_hash = hashlib.new(HASH_ALGO, byte_re_password)
 
         print("------------<>-----------")
-    
-        if(pass_hash.digest() == re_pass_hash.digest()):
+
+        if pass_hash.digest() == re_pass_hash.digest():
             print("storing username and password...")
             # creating a special salt for new user
             salt = generate_salt()
@@ -171,14 +170,14 @@ def make_new_user(password_file, user_password):
             with open(password_file, "wb") as file:
                 pickle.dump(user_password, file)
             loop_make_user = False
-            return
         else:
             print("Sorry, either these passwords do not match, or the resultant hashes are wrong.")
             print("please try again")
             # loop again
 
 
-def remove_user(pass_file_name, user_password):
+def remove_user(pass_file_name):
+    """ Removes user from data base """
     # get username
     which_user = input("what user would you like to delete?:")
     # load in dictionary
@@ -203,11 +202,9 @@ def remove_user(pass_file_name, user_password):
         # now I am going to reload the dictionary into the file
         with open(pass_file_name, "wb") as file:
             pickle.dump(user_dict, file)
-        return
     else:
         print("This username was not found and can't be deleted")
-        return
-  
+
 
 def login(user_pass_data_base):
     """check to see if user is in data base"""
@@ -233,20 +230,19 @@ def login(user_pass_data_base):
         print("logged in!")
         # might want to send my encoded password.... ?
         post_auth_loop(in_pass, salt)
-        return
     else:
         print("authentication failed...")
-        return
- 
+
 
 def make_password_file(password_file_name):
     # touching file to store passwords
     # if it exists, there should be no problem
-    # also making the file hidden :^) 
+    # also making the file hidden :^)
     os.system("touch " + password_file_name)
 
 
 def main():
+    """ unloads password database, and loops initial interface """
     # this is the password files
     password_file_name = ".usr_psw"
     make_password_file(password_file_name)
@@ -277,7 +273,7 @@ def main():
         elif log_prompt == 'l':
             login(user_and_password_data_base)
         elif log_prompt == 'r':
-            remove_user(password_file_name, user_and_password_data_base)
+            remove_user(password_file_name)
         elif log_prompt == 'b':
             os.system("clear")
         elif log_prompt == 'o':
