@@ -16,7 +16,7 @@
 -[x]__main__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 -[x]__main__.py:39:4: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
 -[x]__main__.py:39:8: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
--[ ]__main__.py:39:8: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
+-[x]__main__.py:39:8: R1732: Consider using 'with' for resource-allocating operations (consider-using-with)
 -[ ]__main__.py:46:0: C0116: Missing function or method docstring (missing-function-docstring)
 -[ ]__main__.py:57:38: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)
 -[ ]__main__.py:66:36: C0103: Variable name "f" doesn't conform to snake_case naming style (invalid-name)

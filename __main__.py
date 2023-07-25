@@ -35,15 +35,14 @@ def csv_out(user_and_password_data_base):
     """outputs user, password, and salt into a csv file"""
 
     # where does user want to put information, and create the file
-    outfile = input("what filename would you like the csv file to be?:")
-    os.system("touch " + outfile)
+    csv_file_name = input("what filename would you like the csv file to be?:")
+    os.system("touch " + csv_file_name)
 
     # write the data to file, using hex encoding, and then turning the hex into ascii
-    csv_file = open(outfile, mode='w', encoding="utf-8")
-    for user, hash_n_salt in user_and_password_data_base.items():
-        csv_file.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
-        csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
-    csv_file.close()
+    with open(csv_file_name, mode='w', encoding="utf-8") as csv_file:
+        for user, hash_n_salt in user_and_password_data_base.items():
+            csv_file.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
+            csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")    
 
 
 def decrypt_files(fern_key):
