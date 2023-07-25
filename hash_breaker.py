@@ -23,11 +23,12 @@ def brute_force_hash_break(target_info):
     print("\trunning attack on target:")
     print("\t=============================")
 
+    # read lines from the csv file
     with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
         print("\tfile found...")
         lines = csv_file.readlines()
     
-    # prepair storage for the hash and salt
+    # prepare storage for the hash and salt
     target_hash = ""
     target_salt = ""
 
@@ -39,10 +40,32 @@ def brute_force_hash_break(target_info):
             # remove the new line character
             target_salt = csv_list[2][:-1]
 
+    # print out the target info
     print("\n\t=============================")
     print("\ttarget: " + target_info["user"])
     print("\thash:   " + target_hash)
     print("\tsalt:   " + target_salt)
+
+    # for now we are just going to do numbers and letters, and only four characters
+    # I will likely be adding this to the target info dictionary
+    alpha_char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+            'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+    num_char_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+    
+    pass_length = 4
+    
+    # create a list of the wanted lists
+    omni_list = alpha_char_list + num_char_list
+
+    # for right now this is mainly what I can think about
+    for letter_one in omni_list:
+        for letter_two in omni_list:
+            for letter_three in omni_list:
+                for letter_four in omni_list:
+                    pass_try = letter_one + letter_two + letter_three + letter_four
+                    print(pass_try)
+
 
 
 
