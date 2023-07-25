@@ -32,16 +32,18 @@ def csv_out(user_and_password_data_base):
     # where does user want to put information
     outfile = input("what filename would you like the csv file to be?:")
 
-    for user, hash_n_salt in user_and_password_data_base.items():
-        print("user: " + user)
-        print("password hash:")
-        print(hash_n_salt[0])
 
-        # for some reason this doesn't work 
-        pass_hash = bytes.decode(hash_n_salt[0], ENCODING)
-        print(pass_hash)
-        print("salt hash: ")
-        print(hash_n_salt[1])
+    # create the file we want to use
+    os.system("touch " + outfile)
+   
+    
+    for user, hash_n_salt in user_and_password_data_base.items():
+        print(user + "," + str(hash_n_salt[0]) + "," + str(hash_n_salt[1]) + "\n")
+
+    # f = open(outfile, "w") 
+    # for user, hash_n_salt in user_and_password_data_base.items():
+    #   f.write(user + "," + str(hash_n_salt[0]) + "," + str(hash_n_salt[1]) + "\n")
+    # f.close()
 
 
 def decrypt_files(fern_key):
