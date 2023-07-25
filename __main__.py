@@ -1,20 +1,16 @@
 
 """ This program creates a user environemnt to encrypt and decrypt files """
 
-import hashlib
-import os
-import pickle
-
-# encryption libs
-
-import cryptography
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
-import secrets
 import base64
-import getpass
 import binascii
+import getpass
+import hashlib
+import os
+import pickle
+import secrets
 
 
 # problems:
@@ -180,7 +176,7 @@ def make_new_user(password_file, user_password):
             # loop again
 
 
-def remove_user(pass_file_name, user_password):
+def remove_user(pass_file_name):
     """ Removes user from data base """
     # get username
     which_user = input("what user would you like to delete?:")
@@ -277,7 +273,7 @@ def main():
         elif log_prompt == 'l':
             login(user_and_password_data_base)
         elif log_prompt == 'r':
-            remove_user(password_file_name, user_and_password_data_base)
+            remove_user(password_file_name)
         elif log_prompt == 'b':
             os.system("clear")
         elif log_prompt == 'o':

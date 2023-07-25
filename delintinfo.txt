@@ -1,7 +1,6 @@
 ************* Module __main__
 __main__.py:132:0: C0116: Missing function or method docstring (missing-function-docstring)
 __main__.py:136:0: C0116: Missing function or method docstring (missing-function-docstring)
-__main__.py:183:32: W0613: Unused argument 'user_password' (unused-argument)
 __main__.py:241:0: C0116: Missing function or method docstring (missing-function-docstring)
 __main__.py:14:0: C0411: standard import "import secrets" should be placed before "import cryptography" (wrong-import-order)
 __main__.py:15:0: C0411: standard import "import base64" should be placed before "import cryptography" (wrong-import-order)
@@ -10,5 +9,5 @@ __main__.py:17:0: C0411: standard import "import binascii" should be placed befo
 __main__.py:10:0: W0611: Unused import cryptography (unused-import)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.47/10 (previous run: 9.42/10, +0.05)
+Your code has been rated at 9.53/10 (previous run: 9.47/10, +0.06)
 
