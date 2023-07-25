@@ -6,22 +6,34 @@ break the hashes and print a found password when completed. """
 
 
 
-def brute_force_hash_break(target):
+def show_target_info(target_info):
+    for feild, value in target_info.items():
+        print(feild + ":" + value)
+
+
+def brute_force_hash_break(target_info):
     """ uses a brute force method to break the given account's hash """
     print("you are running the brute force hash break...")
 
-def choose_target(target):
+
+def choose_target(target_info):
     """ Uses directory structure to find a file to search for the csv file, and returns that target"""
     print("you are now choosing target...")
+    target_file = input("csv file name in the local directory:")
+    target_info["file"] = target_file
 
-    return target
+    target_user = input("User name in the csv file:")
+    target_info["user"] = target_user
 
+    return target_info
 
 
 def main():
     print("Welcome to \"hash_breaker\"")
     print("=============================")
-   
+
+    # defines the target information
+    target_info = {"file": "output.csv", "user": "root"}
     loop_prompt = True
 
     while loop_prompt:
@@ -35,15 +47,12 @@ def main():
         print("=============================")
         option = input("option:")
 
-        # defines the target file for attack, default is output.csv
-        target = "output.csv"
-
         if option == 'c':
-            target = choose_target(target)
+            target_info = choose_target(target_info)
         elif option == 'p':
-            print(target)
+            show_target_info(target_info)
         elif option == 'r':
-            brute_force_hash_break(target)
+            brute_force_hash_break(target_info)
         elif option == 'q':
             loop_prompt = False
         else:
