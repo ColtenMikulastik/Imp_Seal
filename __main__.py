@@ -1,3 +1,6 @@
+
+""" This program creates a user environemnt to encrypt and decrypt files """
+
 import hashlib
 import os
 import pickle
@@ -30,24 +33,24 @@ HASH_ALGO = "sha256"
 
 def csv_out(user_and_password_data_base):
     """outputs user, password, and salt into a csv file"""
-    
+
     # where does user want to put information, and create the file
     outfile = input("what filename would you like the csv file to be?:")
     os.system("touch " + outfile)
 
     # write the data to file, using hex encoding, and then turning the hex into ascii
-    f = open(outfile, "w") 
+    csv_file = open(outfile, mode='w', encoding="utf-8")
     for user, hash_n_salt in user_and_password_data_base.items():
-        f.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
-        f.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
-    f.close()
+        csv_file.write(user + "," + binascii.b2a_hex(hash_n_salt[0]).decode("ascii"))
+        csv_file.write("," + binascii.b2a_hex(hash_n_salt[1]).decode("ascii") + "\n")
+    csv_file.close()
 
 
 def decrypt_files(fern_key):
     # move to the decrypt file
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "decrypt_me"))
-    
+
     # find all the files inside
     files_to_decrypt = os.listdir()
 
@@ -69,19 +72,19 @@ def decrypt_files(fern_key):
         print(fix_ext + " file done decrypting")
     # notify the user
     print("finished decrypting")
-    
+
 
 
 def encrypt_files(fern_key):
     # move to the encrypt_me directory
     cur_dir = os.getcwd()
     os.chdir(os.path.join(cur_dir, "encrypt_me"))
-    
+
     # find all the files inside
     files_to_encrypt = os.listdir()
-    
+
     #loop through the files
-    for file_name in files_to_encrypt: 
+    for file_name in files_to_encrypt:
         # take the data
         with open(file_name, "rb") as f:
             file_data = f.read()
@@ -105,7 +108,7 @@ def post_auth_loop(password, salt):
         # get encrypt or decry
         in_bool = None
         in_bool = input("would you like to (e)ncrypt, (d)ecrypt or (q)uit?:")
-        
+    
         if in_bool == 'e':
             # encrypt the file
             fern_key = Fernet(key)
@@ -117,13 +120,12 @@ def post_auth_loop(password, salt):
             fern_key = Fernet(key)
             # send to function
             decrypt_files(fern_key)
-        
+
         elif in_bool == 'q':
             loop_through = False
 
         else:
             print("could not understand input")
-
 
 
 def generate_salt():
@@ -159,8 +161,8 @@ def make_new_user(password_file, user_password):
         re_pass_hash = hashlib.new(HASH_ALGO, byte_re_password)
 
         print("------------<>-----------")
-    
-        if(pass_hash.digest() == re_pass_hash.digest()):
+
+        if pass_hash.digest() == re_pass_hash.digest():
             print("storing username and password...")
             # creating a special salt for new user
             salt = generate_salt()
@@ -207,7 +209,7 @@ def remove_user(pass_file_name, user_password):
     else:
         print("This username was not found and can't be deleted")
         return
-  
+
 
 def login(user_pass_data_base):
     """check to see if user is in data base"""
@@ -237,12 +239,12 @@ def login(user_pass_data_base):
     else:
         print("authentication failed...")
         return
- 
+
 
 def make_password_file(password_file_name):
     # touching file to store passwords
     # if it exists, there should be no problem
-    # also making the file hidden :^) 
+    # also making the file hidden :^)
     os.system("touch " + password_file_name)
 
 
