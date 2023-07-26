@@ -4,8 +4,6 @@
 utilizing the csv file from before, this program will attempt to 
 break the hashes and print a found password when completed. """
 
-
-
 def show_target_info(target_info):
     """ prints the dictionary for the  target information """
     print("\n\t=============================")
@@ -45,31 +43,59 @@ def brute_force_hash_break(target_info):
     print("\ttarget: " + target_info["user"])
     print("\thash:   " + target_hash)
     print("\tsalt:   " + target_salt)
+    
 
     # for now we are just going to do numbers and letters, and only four characters
     # I will likely be adding this to the target info dictionary
+    # variables that define the scan
     alpha_char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
             'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
     num_char_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
-    
     pass_length = 4
-    
-    # create a list of the wanted lists
-    omni_list = alpha_char_list + num_char_list
+    omni_list = alpha_char_list
 
-    # for right now this is mainly what I can think about
-    for letter_one in omni_list:
-        for letter_two in omni_list:
-            for letter_three in omni_list:
-                for letter_four in omni_list:
-                    pass_try = letter_one + letter_two + letter_three + letter_four
-                    print(pass_try)
+    # create the list wherethe password will go
+    place_list = [0] * pass_length
+    allpp = len(omni_list) ** pass_length
 
-    # if you have an array. pass_length long, with omni_list.length() ints at each index and you subtracked starting at the end....
-    # it would be like a base-"omni_list" number system
-    # that would work
+    # print information about the list generations
+    print("\n\t=============================")
+    print("\tthere are " + str(allpp) + " possible passwords...")
+    last_call = input("\tdo you want to start the attack?(y/n)")
+    if(last_call != 'y'):
+        print("\tokay returning to main menue...")
+        return
 
+
+    # set some varibles for the loop
+    iterator = int(0)
+    all_pass_found = False
+
+    # this loop generate all possible passwords
+    while all_pass_found != True:
+        # round before applying to omni_list to avoid going out of bounds
+        rounder = int(len(place_list) - 1)
+        while rounder >= 0:
+            if place_list[rounder] >= len(omni_list):
+                place_list[rounder - 1] = place_list[rounder - 1] + 1
+                place_list[rounder] = 0
+            rounder = rounder - 1
+
+        # print the output
+        for letter in place_list:
+            print(omni_list[letter], end="")
+        print()
+
+        # subtract one from the last place
+        place_list[-1] = place_list[-1] + 1
+        iterator = iterator + 1
+
+        # if all possible passwords are found then we quit
+        if iterator >= allpp:
+            all_pass_found = True
+    print("\n\t=============================")
+    print("\tall passwords checked returning to the main menue")
 
 
 def choose_target(target_info):
