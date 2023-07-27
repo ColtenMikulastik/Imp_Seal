@@ -4,6 +4,11 @@
 utilizing the csv file from before, this program will attempt to 
 break the hashes and print a found password when completed. """
 
+
+import binascii
+import hashlib
+
+
 def show_target_info(target_info):
     """ prints the dictionary for the  target information """
     print("\n\t=============================")
@@ -25,10 +30,10 @@ def brute_force_hash_break(target_info):
     with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
         print("\tfile found...")
         lines = csv_file.readlines()
-    
+
     # prepare storage for the hash and salt
-    target_hash = ""
-    target_salt = ""
+    target_hash = str()
+    target_salt = str()
 
     for line in lines:
         csv_list = line.split(',')
@@ -40,9 +45,11 @@ def brute_force_hash_break(target_info):
 
     # print out the target info
     print("\n\t=============================")
-    print("\ttarget: " + target_info["user"])
-    print("\thash:   " + target_hash)
-    print("\tsalt:   " + target_salt)
+    print("\ttarget:   " + target_info["user"])
+    print("\thash:     " + target_hash)
+    print("\tsalt:     " + target_salt)
+    print("\tencoding: " + target_info["encoding"])
+    print("\thash_algo:" + target_info["hash_algo"])
     
 
     # for now we are just going to do numbers and letters, and only four characters
@@ -52,11 +59,15 @@ def brute_force_hash_break(target_info):
             'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
     num_char_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+    test_alpha_char_list = ['a', 'b', 'c']
     pass_length = 4
-    omni_list = alpha_char_list
+    omni_list = test_alpha_char_list
 
     # create the list wherethe password will go
     place_list = [0] * pass_length
+
+    # all possible passwords created: characters ^ (password_length)
     allpp = len(omni_list) ** pass_length
 
     # print information about the list generations
@@ -66,7 +77,6 @@ def brute_force_hash_break(target_info):
     if(last_call != 'y'):
         print("\tokay returning to main menue...")
         return
-
 
     # set some varibles for the loop
     iterator = int(0)
@@ -82,10 +92,20 @@ def brute_force_hash_break(target_info):
                 place_list[rounder] = 0
             rounder = rounder - 1
 
-        # print the output
+        # creating the password variable
+        pass_attempt = list()
+
+        # load information into the password attempt
         for letter in place_list:
-            print(omni_list[letter], end="")
-        print()
+            pass_attempt.append(omni_list[letter])
+
+        # join the characters and print the output
+        pass_attempt = ''.join(pass_attempt)
+        print("attempting password: " + pass_attempt)
+
+        # hashify this biz
+        # pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
+        # pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
 
         # subtract one from the last place
         place_list[-1] = place_list[-1] + 1
@@ -94,6 +114,7 @@ def brute_force_hash_break(target_info):
         # if all possible passwords are found then we quit
         if iterator >= allpp:
             all_pass_found = True
+
     print("\n\t=============================")
     print("\tall passwords checked returning to the main menue")
 
@@ -120,7 +141,7 @@ def main():
     print("=============================")
 
     # defines the target information
-    target_info = {"file": "output.csv", "user": "root"}
+    target_info = {"file": "output.csv", "user": "root", "encoding": "utf-8", "hash_algo": "sha256"}
     # sets looping to true
     loop_prompt = True
 
