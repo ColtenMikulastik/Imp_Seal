@@ -62,7 +62,7 @@ def brute_force_hash_break(target_info):
 
     test_alpha_char_list = ['a', 'b', 'c']
     pass_length = 4
-    omni_list = test_alpha_char_list
+    omni_list = alpha_char_list
 
     # create the list wherethe password will go
     place_list = [0] * pass_length
@@ -104,8 +104,18 @@ def brute_force_hash_break(target_info):
         print("attempting password: " + pass_attempt)
 
         # hashify this biz
-        # pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
-        # pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
+        pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
+        pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
+            
+        # printing the hash
+        real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
+
+        if real_pass_attempt_hash == target_hash:
+            print("password found!")
+            print("password hash: " + real_pass_attempt_hash)
+            print("password     : " + pass_attempt)
+            no = input("press enter to continue:")
+            return
 
         # subtract one from the last place
         place_list[-1] = place_list[-1] + 1
