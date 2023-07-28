@@ -50,7 +50,7 @@ def brute_force_hash_break(target_info):
     print("\tsalt:     " + target_salt)
     print("\tencoding: " + target_info["encoding"])
     print("\thash_algo:" + target_info["hash_algo"])
-    
+
 
     # for now we are just going to do numbers and letters, and only four characters
     # I will likely be adding this to the target info dictionary
@@ -74,7 +74,7 @@ def brute_force_hash_break(target_info):
     print("\n\t=============================")
     print("\tthere are " + str(allpp) + " possible passwords...")
     last_call = input("\tdo you want to start the attack?(y/n)")
-    if(last_call != 'y'):
+    if last_call != 'y':
         print("\tokay returning to main menue...")
         return
 
@@ -83,7 +83,7 @@ def brute_force_hash_break(target_info):
     all_pass_found = False
 
     # this loop generate all possible passwords
-    while all_pass_found != True:
+    while all_pass_found is False:
         # round before applying to omni_list to avoid going out of bounds
         rounder = int(len(place_list) - 1)
         while rounder >= 0:
@@ -93,7 +93,7 @@ def brute_force_hash_break(target_info):
             rounder = rounder - 1
 
         # creating the password variable
-        pass_attempt = list()
+        pass_attempt = []
 
         # load information into the password attempt
         for letter in place_list:
@@ -106,7 +106,7 @@ def brute_force_hash_break(target_info):
         # hashify this biz
         pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
         pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
-            
+
         # printing the hash
         real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
 
@@ -114,7 +114,7 @@ def brute_force_hash_break(target_info):
             print("password found!")
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
-            no = input("press enter to continue:")
+            input("press enter to continue:")
             return
 
         # subtract one from the last place
@@ -130,7 +130,9 @@ def brute_force_hash_break(target_info):
 
 
 def choose_target(target_info):
-    """ Uses directory structure to find a file to search for the csv file, and returns that target"""
+    """ Uses directory structure to find a file to search for the csv file,
+    and returns that target"""
+
     print("\n\t=============================")
     print("\tyou are now choosing target:")
     print("\t=============================")
