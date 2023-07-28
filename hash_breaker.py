@@ -9,6 +9,15 @@ import binascii
 import hashlib
 
 
+
+
+# global list varibles
+ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+    'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+
 def show_target_info(target_info):
     """ prints the dictionary for the  target information """
     print("\n\t=============================")
@@ -42,23 +51,14 @@ def brute_force_hash_break(target_info):
     # call function to print info
     show_target_info(target_info)
 
-    # for now we are just going to do numbers and letters, and only four characters
-    # I will likely be adding this to the target info dictionary
-    # variables that define the scan
-    alpha_char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-            'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-    num_char_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
-
-    test_alpha_char_list = ['a', 'b', 'c']
-    pass_length = 4
-    omni_list = alpha_char_list
+    # add global varibles to character list
+    omni_list = ALPHA_LIST + NUM_LIST
 
     # create the list wherethe password will go
-    place_list = [0] * pass_length
+    place_list = [0] * int(target_info["pass_len"])
 
     # all possible passwords created: characters ^ (password_length)
-    allpp = len(omni_list) ** pass_length
+    allpp = len(omni_list) ** int(target_info["pass_len"])
 
     # print information about the list generations
     print("\n\t=============================")
@@ -104,6 +104,7 @@ def brute_force_hash_break(target_info):
             print("password found!")
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
+            target_info["password"] = pass_attempt
             input("press enter to continue:")
             return
 
@@ -145,10 +146,13 @@ def main():
     # defines the target information
     target_info = {"file": "output.csv",
                    "user": "root",
-                   "hash": "unknown",
-                   "salt": "unknown",
+                   "hash": "!unknown!",
+                   "salt": "!unknown!",
                    "encoding": "utf-8",
-                   "hash_algo": "sha256"}
+                   "hash_algo": "sha256",
+                   "pass_len": "4",
+                   "password": "!unknown!"}
+
     # sets looping to true
     loop_prompt = True
 
@@ -165,7 +169,7 @@ def main():
 
         # the decission tree
         if option == 'c':
-            target_info = choose_target(target_info)
+            choose_target(target_info)
         elif option == 'p':
             show_target_info(target_info)
         elif option == 'r':
