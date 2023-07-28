@@ -9,13 +9,30 @@ import binascii
 import hashlib
 
 
-
-
 # global list varibles
 ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+
+def load_target_hash(target_info):
+    """ loads the information defined in the csv file """
+    # read lines from the csv file
+    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
+        print("\tfile found...")
+        lines = csv_file.readlines()
+
+    for line in lines:
+        csv_list = line.split(',')
+        if csv_list[0] == target_info["user"]:
+            print("\tuser found...")
+            target_info["hash"] = csv_list[1]
+            # remove the new line character
+            target_info["salt"]  = csv_list[2][:-1]
+
+    # call function to print info
+    show_target_info(target_info)
 
 
 def show_target_info(target_info):
@@ -34,27 +51,10 @@ def brute_force_hash_break(target_info):
     print("\n\t=============================")
     print("\trunning attack on target:")
     print("\t=============================")
-
-    # read lines from the csv file
-    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
-        print("\tfile found...")
-        lines = csv_file.readlines()
-
-    for line in lines:
-        csv_list = line.split(',')
-        if csv_list[0] == target_info["user"]:
-            print("\tuser found...")
-            target_info["hash"] = csv_list[1]
-            # remove the new line character
-            target_info["salt"]  = csv_list[2][:-1]
-
-    # call function to print info
-    show_target_info(target_info)
-
     # add global varibles to character list
     omni_list = ALPHA_LIST + NUM_LIST
 
-    # create the list wherethe password will go
+    # create the list where num to character mapping goes
     place_list = [0] * int(target_info["pass_len"])
 
     # all possible passwords created: characters ^ (password_length)
@@ -135,8 +135,6 @@ def choose_target(target_info):
     target_user = input("\tuser name in the csv file:")
     target_info["user"] = target_user
 
-    return target_info
-
 
 def main():
     """ Runs the interactive prompt for the user """
@@ -161,6 +159,7 @@ def main():
         print("please choose an option below:")
         print("=============================")
         print("c - choose target in csv file")
+        print("l - load info from csv")
         print("p - print choosen target")
         print("r - run attack")
         print("q - quit")
@@ -170,6 +169,8 @@ def main():
         # the decission tree
         if option == 'c':
             choose_target(target_info)
+        elif option == 'l':
+            load_target_hash(target_info)
         elif option == 'p':
             show_target_info(target_info)
         elif option == 'r':
