@@ -31,26 +31,16 @@ def brute_force_hash_break(target_info):
         print("\tfile found...")
         lines = csv_file.readlines()
 
-    # prepare storage for the hash and salt
-    target_hash = str()
-    target_salt = str()
-
     for line in lines:
         csv_list = line.split(',')
         if csv_list[0] == target_info["user"]:
             print("\tuser found...")
-            target_hash = csv_list[1]
+            target_info["hash"] = csv_list[1]
             # remove the new line character
-            target_salt = csv_list[2][:-1]
+            target_info["salt"]  = csv_list[2][:-1]
 
-    # print out the target info
-    print("\n\t=============================")
-    print("\ttarget:   " + target_info["user"])
-    print("\thash:     " + target_hash)
-    print("\tsalt:     " + target_salt)
-    print("\tencoding: " + target_info["encoding"])
-    print("\thash_algo:" + target_info["hash_algo"])
-
+    # call function to print info
+    show_target_info(target_info)
 
     # for now we are just going to do numbers and letters, and only four characters
     # I will likely be adding this to the target info dictionary
@@ -110,7 +100,7 @@ def brute_force_hash_break(target_info):
         # printing the hash
         real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
 
-        if real_pass_attempt_hash == target_hash:
+        if real_pass_attempt_hash == target_info["hash"]:
             print("password found!")
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
@@ -153,7 +143,12 @@ def main():
     print("=============================")
 
     # defines the target information
-    target_info = {"file": "output.csv", "user": "root", "encoding": "utf-8", "hash_algo": "sha256"}
+    target_info = {"file": "output.csv",
+                   "user": "root",
+                   "hash": "unknown",
+                   "salt": "unknown",
+                   "encoding": "utf-8",
+                   "hash_algo": "sha256"}
     # sets looping to true
     loop_prompt = True
 
