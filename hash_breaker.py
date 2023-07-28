@@ -9,6 +9,32 @@ import binascii
 import hashlib
 
 
+# global list varibles
+ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+    'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+
+def load_target_hash(target_info):
+    """ loads the information defined in the csv file """
+    # read lines from the csv file
+    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
+        print("\tfile found...")
+        lines = csv_file.readlines()
+
+    for line in lines:
+        csv_list = line.split(',')
+        if csv_list[0] == target_info["user"]:
+            print("\tuser found...")
+            target_info["hash"] = csv_list[1]
+            # remove the new line character
+            target_info["salt"]  = csv_list[2][:-1]
+
+    # call function to print info
+    show_target_info(target_info)
+
+
 def show_target_info(target_info):
     """ prints the dictionary for the  target information """
     print("\n\t=============================")
@@ -25,56 +51,20 @@ def brute_force_hash_break(target_info):
     print("\n\t=============================")
     print("\trunning attack on target:")
     print("\t=============================")
+    # add global varibles to character list
+    omni_list = ALPHA_LIST + NUM_LIST
 
-    # read lines from the csv file
-    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
-        print("\tfile found...")
-        lines = csv_file.readlines()
-
-    # prepare storage for the hash and salt
-    target_hash = str()
-    target_salt = str()
-
-    for line in lines:
-        csv_list = line.split(',')
-        if csv_list[0] == target_info["user"]:
-            print("\tuser found...")
-            target_hash = csv_list[1]
-            # remove the new line character
-            target_salt = csv_list[2][:-1]
-
-    # print out the target info
-    print("\n\t=============================")
-    print("\ttarget:   " + target_info["user"])
-    print("\thash:     " + target_hash)
-    print("\tsalt:     " + target_salt)
-    print("\tencoding: " + target_info["encoding"])
-    print("\thash_algo:" + target_info["hash_algo"])
-    
-
-    # for now we are just going to do numbers and letters, and only four characters
-    # I will likely be adding this to the target info dictionary
-    # variables that define the scan
-    alpha_char_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-            'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-    num_char_list = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
-
-    test_alpha_char_list = ['a', 'b', 'c']
-    pass_length = 4
-    omni_list = alpha_char_list
-
-    # create the list wherethe password will go
-    place_list = [0] * pass_length
+    # create the list where num to character mapping goes
+    place_list = [0] * int(target_info["pass_len"])
 
     # all possible passwords created: characters ^ (password_length)
-    allpp = len(omni_list) ** pass_length
+    allpp = len(omni_list) ** int(target_info["pass_len"])
 
     # print information about the list generations
     print("\n\t=============================")
     print("\tthere are " + str(allpp) + " possible passwords...")
     last_call = input("\tdo you want to start the attack?(y/n)")
-    if(last_call != 'y'):
+    if last_call != 'y':
         print("\tokay returning to main menue...")
         return
 
@@ -83,7 +73,7 @@ def brute_force_hash_break(target_info):
     all_pass_found = False
 
     # this loop generate all possible passwords
-    while all_pass_found != True:
+    while all_pass_found is False:
         # round before applying to omni_list to avoid going out of bounds
         rounder = int(len(place_list) - 1)
         while rounder >= 0:
@@ -93,7 +83,7 @@ def brute_force_hash_break(target_info):
             rounder = rounder - 1
 
         # creating the password variable
-        pass_attempt = list()
+        pass_attempt = []
 
         # load information into the password attempt
         for letter in place_list:
@@ -106,15 +96,16 @@ def brute_force_hash_break(target_info):
         # hashify this biz
         pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
         pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
-            
+
         # printing the hash
         real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
 
-        if real_pass_attempt_hash == target_hash:
+        if real_pass_attempt_hash == target_info["hash"]:
             print("password found!")
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
-            no = input("press enter to continue:")
+            target_info["password"] = pass_attempt
+            input("press enter to continue:")
             return
 
         # subtract one from the last place
@@ -130,7 +121,9 @@ def brute_force_hash_break(target_info):
 
 
 def choose_target(target_info):
-    """ Uses directory structure to find a file to search for the csv file, and returns that target"""
+    """ Uses directory structure to find a file to search for the csv file,
+    and returns that target"""
+
     print("\n\t=============================")
     print("\tyou are now choosing target:")
     print("\t=============================")
@@ -142,8 +135,6 @@ def choose_target(target_info):
     target_user = input("\tuser name in the csv file:")
     target_info["user"] = target_user
 
-    return target_info
-
 
 def main():
     """ Runs the interactive prompt for the user """
@@ -151,7 +142,15 @@ def main():
     print("=============================")
 
     # defines the target information
-    target_info = {"file": "output.csv", "user": "root", "encoding": "utf-8", "hash_algo": "sha256"}
+    target_info = {"file": "output.csv",
+                   "user": "root",
+                   "hash": "!unknown!",
+                   "salt": "!unknown!",
+                   "encoding": "utf-8",
+                   "hash_algo": "sha256",
+                   "pass_len": "4",
+                   "password": "!unknown!"}
+
     # sets looping to true
     loop_prompt = True
 
@@ -160,6 +159,7 @@ def main():
         print("please choose an option below:")
         print("=============================")
         print("c - choose target in csv file")
+        print("l - load info from csv")
         print("p - print choosen target")
         print("r - run attack")
         print("q - quit")
@@ -168,7 +168,9 @@ def main():
 
         # the decission tree
         if option == 'c':
-            target_info = choose_target(target_info)
+            choose_target(target_info)
+        elif option == 'l':
+            load_target_hash(target_info)
         elif option == 'p':
             show_target_info(target_info)
         elif option == 'r':
