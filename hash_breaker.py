@@ -17,15 +17,25 @@ NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 
 def time_diff(past_time, now_time):
-    """ takes two strftime strings and returns the difference between the two """
-    past_time = past_time.split(':')
-    now_time = now_time.split(':')
-    diff_time = list()
+    """ takes two floats and returns the difference between the two in a list """
 
-    for i in range(0, len(past_time)):
-        diff_time.append(str(int(now_time[i]) - int(past_time[i])))
+    # calc difference in time create variables
+    diff_time = now_time - past_time
     
-    return diff_time
+    diff_time_list = list()
+    
+    # append and remove hours
+    diff_time_list.append(str(int(diff_time / 3600)))
+    diff_time = diff_time % 3600
+
+    # append and remove min
+    diff_time_list.append(str(int(diff_time / 60)))
+    diff_time = diff_time % 60
+
+    # append seconds
+    diff_time_list.append(str(int(diff_time)))
+    
+    return diff_time_list
 
 
 def load_target_hash(target_info):
@@ -80,9 +90,8 @@ def brute_force_hash_break(target_info):
         print("\tokay returning to main menue...")
         return
 
-    # get the current time in format year:month:day:hours:min:sec
-    before_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
-    print(before_attack_time)
+    # save time in seconds
+    before_attack_time = time.time()
 
     # set some varibles for the loop
     iterator = int(0)
@@ -119,13 +128,10 @@ def brute_force_hash_break(target_info):
         if real_pass_attempt_hash == target_info["hash"]:
             print("password found!")
             # calculate the difference in time
-            after_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
-            print("time after attack" + after_attack_time)
-            print("time before attack" + before_attack_time)
-            print("attack took: ", end='')
+            after_attack_time = time.time()
             diff_time = time_diff(before_attack_time, after_attack_time)
-            # only going to print the hours min and sec
-            print("hours: " + diff_time[3] + " min: " + diff_time[4] + " sec: " + diff_time[5])
+            # only going to print the hours min and sec!!!
+            print("hours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
             target_info["password"] = pass_attempt
