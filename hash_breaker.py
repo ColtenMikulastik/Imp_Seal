@@ -18,7 +18,14 @@ NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 def time_diff(past_time, now_time):
     """ takes two strftime strings and returns the difference between the two """
+    past_time = past_time.split(':')
+    now_time = now_time.split(':')
+    diff_time = list()
+
+    for i in range(0, len(past_time)):
+        diff_time.append(str(int(now_time[i]) - int(past_time[i])))
     
+    return diff_time
 
 
 def load_target_hash(target_info):
@@ -114,7 +121,9 @@ def brute_force_hash_break(target_info):
             # calculate the difference in time
             after_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
             print(after_attack_time)
-            time_diff(before_attack_time, after_attack_time)
+            print("attack took: ", end='')
+            diff_time = time_diff(before_attack_time, after_attack_time)
+            print(diff_time)
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
             target_info["password"] = pass_attempt
