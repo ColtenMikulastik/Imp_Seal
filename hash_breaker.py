@@ -7,13 +7,18 @@ break the hashes and print a found password when completed. """
 
 import binascii
 import hashlib
-
+import time
 
 # global list varibles
 ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+
+def time_diff(past_time, now_time):
+    """ takes two strftime strings and returns the difference between the two """
+    
 
 
 def load_target_hash(target_info):
@@ -68,6 +73,10 @@ def brute_force_hash_break(target_info):
         print("\tokay returning to main menue...")
         return
 
+    # get the current time in format year:month:day:hours:min:sec
+    before_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
+    print(before_attack_time)
+
     # set some varibles for the loop
     iterator = int(0)
     all_pass_found = False
@@ -102,6 +111,10 @@ def brute_force_hash_break(target_info):
 
         if real_pass_attempt_hash == target_info["hash"]:
             print("password found!")
+            # calculate the difference in time
+            after_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
+            print(after_attack_time)
+            time_diff(before_attack_time, after_attack_time)
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
             target_info["password"] = pass_attempt
