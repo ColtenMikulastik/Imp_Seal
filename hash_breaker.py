@@ -72,7 +72,6 @@ NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 def time_diff(past_time, now_time):
     """ takes two floats and returns the difference between the two in a list """
-
     # calc difference in time create variables
     diff_time = now_time - past_time
     
@@ -90,36 +89,6 @@ def time_diff(past_time, now_time):
     diff_time_list.append(str(int(diff_time)))
     
     return diff_time_list
-
-
-def load_target_hash(target_info):
-    """ loads the information defined in the csv file """
-    # read lines from the csv file
-    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
-        print("\tfile found...")
-        lines = csv_file.readlines()
-
-    for line in lines:
-        csv_list = line.split(',')
-        if csv_list[0] == target_info["user"]:
-            print("\tuser found...")
-            target_info["hash"] = csv_list[1]
-            # remove the new line character
-            target_info["salt"]  = csv_list[2][:-1]
-
-    # call function to print info
-    show_target_info(target_info)
-
-
-def show_target_info(target_info):
-    """ prints the dictionary for the  target information """
-    print("\n\t=============================")
-    print("\tprinting target info:")
-    print("\t=============================")
-
-    # loops through dictionary printing information about set target
-    for feild, value in target_info.items():
-        print("\t" + feild + ":" + value)
 
 
 def brute_force_hash_break(target_info):
@@ -232,14 +201,7 @@ def main():
     print("=============================")
 
     # defines the target information
-    target_info = {"file": "output.csv",
-                   "user": "root",
-                   "hash": "!unknown!",
-                   "salt": "!unknown!",
-                   "encoding": "utf-8",
-                   "hash_algo": "sha256",
-                   "pass_len": "4",
-                   "password": "!unknown!"}
+    target = Target()
 
     # sets looping to true
     loop_prompt = True
@@ -260,9 +222,9 @@ def main():
         if option == 'c':
             choose_target(target_info)
         elif option == 'l':
-            load_target_hash(target_info)
+            target.load_csv_file()
         elif option == 'p':
-            show_target_info(target_info)
+            target.print_info()
         elif option == 'r':
             brute_force_hash_break(target_info)
         elif option == 'q':
