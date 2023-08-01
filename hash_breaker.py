@@ -131,6 +131,7 @@ def brute_force_hash_break(target_info):
             after_attack_time = time.time()
             diff_time = time_diff(before_attack_time, after_attack_time)
             # only going to print the hours min and sec!!!
+            print("attempt took:")
             print("hours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
@@ -148,6 +149,11 @@ def brute_force_hash_break(target_info):
 
     print("\n\t=============================")
     print("\tall passwords checked returning to the main menue")
+    after_attack_time = time.time()
+    diff_time = time_diff(before_attack_time, after_attack_time)
+    # only going to print the hours min and sec!!!
+    print("\tattempt took:")
+    print("\thours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
 
 
 def choose_target(target_info):
