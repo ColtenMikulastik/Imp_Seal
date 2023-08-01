@@ -120,10 +120,12 @@ def brute_force_hash_break(target_info):
             print("password found!")
             # calculate the difference in time
             after_attack_time = time.strftime("%Y:%m:%d:%H:%M:%S", time.localtime())
-            print(after_attack_time)
+            print("time after attack" + after_attack_time)
+            print("time before attack" + before_attack_time)
             print("attack took: ", end='')
             diff_time = time_diff(before_attack_time, after_attack_time)
-            print(diff_time)
+            # only going to print the hours min and sec
+            print("hours: " + diff_time[3] + " min: " + diff_time[4] + " sec: " + diff_time[5])
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
             target_info["password"] = pass_attempt
