@@ -179,7 +179,7 @@ def brute_force_hash_break(target_info):
     print("\thours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
 
 
-def choose_target(target_info):
+def choose_target(target):
     """ Uses directory structure to find a file to search for the csv file,
     and returns that target"""
 
@@ -188,11 +188,8 @@ def choose_target(target_info):
     print("\t=============================")
 
     # allows user to input target info
-    target_file = input("\tcsv file name in the local directory:")
-    target_info["file"] = target_file
-
-    target_user = input("\tuser name in the csv file:")
-    target_info["user"] = target_user
+    target.csv_file = input("\tcsv file name in the local directory:")
+    target.user = input("\tuser name in the csv file:")
 
 
 def main():
@@ -220,7 +217,7 @@ def main():
 
         # the decission tree
         if option == 'c':
-            choose_target(target_info)
+            choose_target(target)
         elif option == 'l':
             target.load_csv_file()
         elif option == 'p':
