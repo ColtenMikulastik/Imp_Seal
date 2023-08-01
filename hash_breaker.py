@@ -7,7 +7,61 @@ break the hashes and print a found password when completed. """
 
 import binascii
 import hashlib
+
 import time
+
+class Target:
+    def __init__(self, csv_file = "output.csv", user = "root", encoding = "utf-8", hash_algo = "sha256", pass_len = 4):
+        """ create target """
+        self.csv_file = csv_file
+        self.user = user
+        self.encoding = encoding
+        self.hash_algo = hash_algo
+        self.pass_len = pass_len
+        self.found_hash = False
+        self.found_password = False
+
+    def print_info(self):
+        """ print infomration about the target """
+        # print the known target information
+        print("\n\t=============================")
+        print("\tprinting target info:")
+        print("\t=============================")
+        print("\tcsv file:        " + self.csv_file)
+        print("\tusername:        " + self.user)
+        print("\tencoding:        " + self.encoding)
+        print("\thashing algo:    " + self.hash_algo)
+        print("\tpassword length: " + str(self.pass_len))
+
+        # if hash has been found show user
+        if self.found_hash:
+            print("\thash:            " + self.hash)
+            print("\tsalt:            " + self.salt)
+        else:
+            print("\thash not found... (load csv file first)")
+
+        # if password has been found show user
+        if self.found_password:
+            print("\tpassword         " + self.password())
+        else:
+            print("\tpassword not found... (run attack to get password)")
+
+    def load_csv_file(self):
+        """ calling this function loads information from the csv file given """
+        with open(self.csv_file, mode='r', encoding="utf-8") as csv_file:
+            print("\tfile found...")
+            lines = csv_file.readlines()
+
+        for line in lines:
+            csv_list = line.split(',')
+            if csv_list[0] == self.user:
+                print("\tuser found...")
+                self.hash = csv_list[1]
+                # remove newline char
+                self.salt = csv_list[2][:-1]
+        
+        self.found_hash = True
+        self.print_info()
 
 # global list varibles
 ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
