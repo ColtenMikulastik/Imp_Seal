@@ -42,7 +42,7 @@ class Target:
 
         # if password has been found show user
         if self.found_password:
-            print("\tpassword         " + self.password())
+            print("\tpassword         " + self.password)
         else:
             print("\tpassword not found... (run attack to get password)")
 
@@ -91,7 +91,7 @@ def time_diff(past_time, now_time):
     return diff_time_list
 
 
-def brute_force_hash_break(target_info):
+def brute_force_hash_break(target):
     """ uses a brute force method to break the given account's hash """
     print("\n\t=============================")
     print("\trunning attack on target:")
@@ -100,10 +100,10 @@ def brute_force_hash_break(target_info):
     omni_list = ALPHA_LIST + NUM_LIST
 
     # create the list where num to character mapping goes
-    place_list = [0] * int(target_info["pass_len"])
+    place_list = [0] * int(target.pass_len)
 
     # all possible passwords created: characters ^ (password_length)
-    allpp = len(omni_list) ** int(target_info["pass_len"])
+    allpp = len(omni_list) ** int(target.pass_len)
 
     # print information about the list generations
     print("\n\t=============================")
@@ -142,13 +142,13 @@ def brute_force_hash_break(target_info):
         print("attempting password: " + pass_attempt)
 
         # hashify this biz
-        pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
-        pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
+        pass_attempt_bytes = bytes(pass_attempt, target.encoding)
+        pass_attempt_hash = hashlib.new(target.hash_algo, pass_attempt_bytes)
 
         # printing the hash
         real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
 
-        if real_pass_attempt_hash == target_info["hash"]:
+        if real_pass_attempt_hash == target.hash:
             print("password found!")
             # calculate the difference in time
             after_attack_time = time.time()
@@ -158,7 +158,8 @@ def brute_force_hash_break(target_info):
             print("hours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
-            target_info["password"] = pass_attempt
+            target.found_password = True
+            target.password = pass_attempt
             input("press enter to continue:")
             return
 
@@ -223,7 +224,7 @@ def main():
         elif option == 'p':
             target.print_info()
         elif option == 'r':
-            brute_force_hash_break(target_info)
+            brute_force_hash_break(target)
         elif option == 'q':
             loop_prompt = False
         else:
