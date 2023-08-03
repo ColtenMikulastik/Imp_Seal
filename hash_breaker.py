@@ -7,7 +7,61 @@ break the hashes and print a found password when completed. """
 
 import binascii
 import hashlib
+
 import time
+
+class Target:
+    def __init__(self, csv_file = "output.csv", user = "root", encoding = "utf-8", hash_algo = "sha256", pass_len = 4):
+        """ create target """
+        self.csv_file = csv_file
+        self.user = user
+        self.encoding = encoding
+        self.hash_algo = hash_algo
+        self.pass_len = pass_len
+        self.found_hash = False
+        self.found_password = False
+
+    def print_info(self):
+        """ print infomration about the target """
+        # print the known target information
+        print("\n\t=============================")
+        print("\tprinting target info:")
+        print("\t=============================")
+        print("\tcsv file:        " + self.csv_file)
+        print("\tusername:        " + self.user)
+        print("\tencoding:        " + self.encoding)
+        print("\thashing algo:    " + self.hash_algo)
+        print("\tpassword length: " + str(self.pass_len))
+
+        # if hash has been found show user
+        if self.found_hash:
+            print("\thash:            " + self.hash)
+            print("\tsalt:            " + self.salt)
+        else:
+            print("\thash not found... (load csv file first)")
+
+        # if password has been found show user
+        if self.found_password:
+            print("\tpassword         " + self.password)
+        else:
+            print("\tpassword not found... (run attack to get password)")
+
+    def load_csv_file(self):
+        """ calling this function loads information from the csv file given """
+        with open(self.csv_file, mode='r', encoding="utf-8") as csv_file:
+            print("\tfile found...")
+            lines = csv_file.readlines()
+
+        for line in lines:
+            csv_list = line.split(',')
+            if csv_list[0] == self.user:
+                print("\tuser found...")
+                self.hash = csv_list[1]
+                # remove newline char
+                self.salt = csv_list[2][:-1]
+        
+        self.found_hash = True
+        self.print_info()
 
 # global list varibles
 ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
@@ -18,7 +72,6 @@ NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 def time_diff(past_time, now_time):
     """ takes two floats and returns the difference between the two in a list """
-
     # calc difference in time create variables
     diff_time = now_time - past_time
     
@@ -38,37 +91,7 @@ def time_diff(past_time, now_time):
     return diff_time_list
 
 
-def load_target_hash(target_info):
-    """ loads the information defined in the csv file """
-    # read lines from the csv file
-    with open(target_info["file"], mode='r', encoding="utf-8") as csv_file:
-        print("\tfile found...")
-        lines = csv_file.readlines()
-
-    for line in lines:
-        csv_list = line.split(',')
-        if csv_list[0] == target_info["user"]:
-            print("\tuser found...")
-            target_info["hash"] = csv_list[1]
-            # remove the new line character
-            target_info["salt"]  = csv_list[2][:-1]
-
-    # call function to print info
-    show_target_info(target_info)
-
-
-def show_target_info(target_info):
-    """ prints the dictionary for the  target information """
-    print("\n\t=============================")
-    print("\tprinting target info:")
-    print("\t=============================")
-
-    # loops through dictionary printing information about set target
-    for feild, value in target_info.items():
-        print("\t" + feild + ":" + value)
-
-
-def brute_force_hash_break(target_info):
+def brute_force_hash_break(target):
     """ uses a brute force method to break the given account's hash """
     print("\n\t=============================")
     print("\trunning attack on target:")
@@ -77,10 +100,10 @@ def brute_force_hash_break(target_info):
     omni_list = ALPHA_LIST + NUM_LIST
 
     # create the list where num to character mapping goes
-    place_list = [0] * int(target_info["pass_len"])
+    place_list = [0] * int(target.pass_len)
 
     # all possible passwords created: characters ^ (password_length)
-    allpp = len(omni_list) ** int(target_info["pass_len"])
+    allpp = len(omni_list) ** int(target.pass_len)
 
     # print information about the list generations
     print("\n\t=============================")
@@ -119,22 +142,24 @@ def brute_force_hash_break(target_info):
         print("attempting password: " + pass_attempt)
 
         # hashify this biz
-        pass_attempt_bytes = bytes(pass_attempt, target_info["encoding"])
-        pass_attempt_hash = hashlib.new(target_info["hash_algo"], pass_attempt_bytes)
+        pass_attempt_bytes = bytes(pass_attempt, target.encoding)
+        pass_attempt_hash = hashlib.new(target.hash_algo, pass_attempt_bytes)
 
         # printing the hash
         real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
 
-        if real_pass_attempt_hash == target_info["hash"]:
+        if real_pass_attempt_hash == target.hash:
             print("password found!")
             # calculate the difference in time
             after_attack_time = time.time()
             diff_time = time_diff(before_attack_time, after_attack_time)
             # only going to print the hours min and sec!!!
+            print("attempt took:")
             print("hours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
             print("password hash: " + real_pass_attempt_hash)
             print("password     : " + pass_attempt)
-            target_info["password"] = pass_attempt
+            target.found_password = True
+            target.password = pass_attempt
             input("press enter to continue:")
             return
 
@@ -148,9 +173,14 @@ def brute_force_hash_break(target_info):
 
     print("\n\t=============================")
     print("\tall passwords checked returning to the main menue")
+    after_attack_time = time.time()
+    diff_time = time_diff(before_attack_time, after_attack_time)
+    # only going to print the hours min and sec!!!
+    print("\tattempt took:")
+    print("\thours: " + diff_time[0] + " min: " + diff_time[1] + " sec: " + diff_time[2])
 
 
-def choose_target(target_info):
+def choose_target(target):
     """ Uses directory structure to find a file to search for the csv file,
     and returns that target"""
 
@@ -159,11 +189,8 @@ def choose_target(target_info):
     print("\t=============================")
 
     # allows user to input target info
-    target_file = input("\tcsv file name in the local directory:")
-    target_info["file"] = target_file
-
-    target_user = input("\tuser name in the csv file:")
-    target_info["user"] = target_user
+    target.csv_file = input("\tcsv file name in the local directory:")
+    target.user = input("\tuser name in the csv file:")
 
 
 def main():
@@ -172,14 +199,7 @@ def main():
     print("=============================")
 
     # defines the target information
-    target_info = {"file": "output.csv",
-                   "user": "root",
-                   "hash": "!unknown!",
-                   "salt": "!unknown!",
-                   "encoding": "utf-8",
-                   "hash_algo": "sha256",
-                   "pass_len": "4",
-                   "password": "!unknown!"}
+    target = Target()
 
     # sets looping to true
     loop_prompt = True
@@ -198,13 +218,13 @@ def main():
 
         # the decission tree
         if option == 'c':
-            choose_target(target_info)
+            choose_target(target)
         elif option == 'l':
-            load_target_hash(target_info)
+            target.load_csv_file()
         elif option == 'p':
-            show_target_info(target_info)
+            target.print_info()
         elif option == 'r':
-            brute_force_hash_break(target_info)
+            brute_force_hash_break(target)
         elif option == 'q':
             loop_prompt = False
         else:
