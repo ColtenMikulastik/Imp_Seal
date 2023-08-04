@@ -7,12 +7,14 @@ break the hashes and print a found password when completed. """
 
 import binascii
 import hashlib
-
 import time
 
+
 class Target:
+    """ Target servs as an interactive variable, to store info """
     def __init__(self, csv_file = "output.csv", user = "root", encoding = "utf-8", hash_algo = "sha256", pass_len = 4):
         """ create target """
+        # super long arg, idk what to do about that acording to PEP8
         self.csv_file = csv_file
         self.user = user
         self.encoding = encoding
@@ -20,6 +22,9 @@ class Target:
         self.pass_len = pass_len
         self.found_hash = False
         self.found_password = False
+        self.hash = None
+        self.salt = None
+        self.password = None
 
     def print_info(self):
         """ print infomration about the target """
@@ -59,7 +64,7 @@ class Target:
                 self.hash = csv_list[1]
                 # remove newline char
                 self.salt = csv_list[2][:-1]
-        
+
         self.found_hash = True
         self.print_info()
 
@@ -70,13 +75,49 @@ ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
 NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
 
+def dic_hash_break(target):
+    """ uses dictionary file to break hashes """
+    print("\n\t=============================")
+    print("\trunning attack on target:")
+    print("\t=============================")
+
+    dic_file = input("\twhat file would you like to use for the dictionary attack?: ")
+    # start opening the file
+    with open(dic_file, mode='r', encoding="utf-8") as dic_file_open:
+        print("\tdictionary file found...")
+        dic_words = dic_file_open.readlines()
+
+        # loop through all the words
+        for word in dic_words:
+            pass_attempt = word[:-1]
+            print("attempting word: " + pass_attempt)
+            # reusing code here probably could be broken out into func
+            # hashify this biz
+            pass_attempt_bytes = bytes(pass_attempt, target.encoding)
+            pass_attempt_hash = hashlib.new(target.hash_algo, pass_attempt_bytes)
+
+            # printing the hash
+            real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
+
+            if real_pass_attempt_hash == target.hash:
+                print("password found!")
+                print("password hash: " + real_pass_attempt_hash)
+                print("password     : " + pass_attempt)
+                target.found_password = True
+                target.password = pass_attempt
+                input("press enter to continue:")
+                return
+
+        print("completed list: no matches found")
+
+
 def time_diff(past_time, now_time):
     """ takes two floats and returns the difference between the two in a list """
     # calc difference in time create variables
     diff_time = now_time - past_time
-    
-    diff_time_list = list()
-    
+
+    diff_time_list = []
+
     # append and remove hours
     diff_time_list.append(str(int(diff_time / 3600)))
     diff_time = diff_time % 3600
@@ -87,7 +128,7 @@ def time_diff(past_time, now_time):
 
     # append seconds
     diff_time_list.append(str(int(diff_time)))
-    
+
     return diff_time_list
 
 
@@ -231,7 +272,6 @@ def main():
             print("that is not one of the options (hint: try lowercase)")
 
         print("\n\n")
-
 
 
 if __name__ == "__main__":
