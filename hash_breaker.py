@@ -59,7 +59,7 @@ class Target:
                 self.hash = csv_list[1]
                 # remove newline char
                 self.salt = csv_list[2][:-1]
-        
+
         self.found_hash = True
         self.print_info()
 
@@ -74,9 +74,9 @@ def time_diff(past_time, now_time):
     """ takes two floats and returns the difference between the two in a list """
     # calc difference in time create variables
     diff_time = now_time - past_time
-    
+
     diff_time_list = list()
-    
+
     # append and remove hours
     diff_time_list.append(str(int(diff_time / 3600)))
     diff_time = diff_time % 3600
@@ -87,7 +87,7 @@ def time_diff(past_time, now_time):
 
     # append seconds
     diff_time_list.append(str(int(diff_time)))
-    
+
     return diff_time_list
 
 
