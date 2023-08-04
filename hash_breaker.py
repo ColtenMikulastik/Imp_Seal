@@ -89,8 +89,26 @@ def dic_hash_break(target):
 
         # loop through all the words
         for word in dic_words:
-            print("attempting word: " + word)
+            pass_attempt = word[:-1]
+            print("attempting word: " + pass_attempt)
+            # reusing code here probably could be broken out into func
+            # hashify this biz
+            pass_attempt_bytes = bytes(pass_attempt, target.encoding)
+            pass_attempt_hash = hashlib.new(target.hash_algo, pass_attempt_bytes)
 
+            # printing the hash
+            real_pass_attempt_hash = binascii.b2a_hex(pass_attempt_hash.digest()).decode("ascii")
+
+            if real_pass_attempt_hash == target.hash:
+                print("password found!")
+                print("password hash: " + real_pass_attempt_hash)
+                print("password     : " + pass_attempt)
+                target.found_password = True
+                target.password = pass_attempt
+                input("press enter to continue:")
+                return
+
+        print("completed list: no matches found")
 
 
 def time_diff(past_time, now_time):
