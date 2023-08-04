@@ -7,8 +7,8 @@ break the hashes and print a found password when completed. """
 
 import binascii
 import hashlib
-
 import time
+
 
 class Target:
     """ Target servs as an interactive variable, to store info """
@@ -73,6 +73,24 @@ ALPHA_LIST = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
     'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 NUM_LIST = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+
+
+def dic_hash_break(target):
+    """ uses dictionary file to break hashes """
+    print("\n\t=============================")
+    print("\trunning attack on target:")
+    print("\t=============================")
+
+    dic_file = input("\twhat file would you like to use for the dictionary attack?: ")
+    # start opening the file
+    with open(dic_file, mode='r', encoding="utf-8") as dic_file_open:
+        print("\tdictionary file found...")
+        dic_words = dic_file_open.readlines()
+
+        # loop through all the words
+        for word in dic_words:
+            print("attempting word: " + word)
+
 
 
 def time_diff(past_time, now_time):
