@@ -11,8 +11,10 @@ import hashlib
 import time
 
 class Target:
+    """ Target servs as an interactive variable, to store info """
     def __init__(self, csv_file = "output.csv", user = "root", encoding = "utf-8", hash_algo = "sha256", pass_len = 4):
         """ create target """
+        # super long arg, idk what to do about that acording to PEP8
         self.csv_file = csv_file
         self.user = user
         self.encoding = encoding
@@ -20,6 +22,9 @@ class Target:
         self.pass_len = pass_len
         self.found_hash = False
         self.found_password = False
+        self.hash = None
+        self.salt = None
+        self.password = None
 
     def print_info(self):
         """ print infomration about the target """
@@ -75,7 +80,7 @@ def time_diff(past_time, now_time):
     # calc difference in time create variables
     diff_time = now_time - past_time
 
-    diff_time_list = list()
+    diff_time_list = []
 
     # append and remove hours
     diff_time_list.append(str(int(diff_time / 3600)))
@@ -231,7 +236,6 @@ def main():
             print("that is not one of the options (hint: try lowercase)")
 
         print("\n\n")
-
 
 
 if __name__ == "__main__":
