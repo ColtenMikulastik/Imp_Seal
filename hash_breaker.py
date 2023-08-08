@@ -252,7 +252,8 @@ def main():
         print("c - choose target in csv file")
         print("l - load info from csv")
         print("p - print choosen target")
-        print("r - run attack")
+        print("b - run brute force attack")
+        print("d - run dictionary attack")
         print("q - quit")
         print("=============================")
         option = input("option:")
@@ -264,8 +265,10 @@ def main():
             target.load_csv_file()
         elif option == 'p':
             target.print_info()
-        elif option == 'r':
+        elif option == 'b':
             brute_force_hash_break(target)
+        elif option == 'd':
+            dic_hash_break(target)
         elif option == 'q':
             loop_prompt = False
         else:
